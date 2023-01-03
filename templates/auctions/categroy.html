@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{categroy}}</h2>
+    {%for auction in auctions %}
+        <div id="div3">
+        <a href="../../specific/{{auction.title}}" style="color: black">
+            <div id="div1">
+                <img src="{{auction.image}}" width="500px" height="300px">
+            </div>
+            <div id="div2">
+                <h2>Name:{{ auction.title }}</h2>
+                <br/>
+                <h3>Price: ${{ auction.startbid }}</h3>
+                <br/>
+                <h3>Description:</h3>
+                <h4>{{ auction.description }}</h4>
+                <br/>
+                <p>Created {{ auction.createTime }}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+{% endblock %}

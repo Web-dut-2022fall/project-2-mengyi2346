@@ -1,0 +1,80 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Listing:{{auction.title}}</h2>
+    <div>
+        <img src="{{auction.image}}" width="500px" height="300px">
+    </div>
+    {%if status != "close" %}
+    <div>
+        {% if isInWatchList == False %}
+        <form action="{% url 'add' %}" method="POST">
+            {% csrf_token %}
+            <input  type="hidden" name="title" value="{{auction.title}}">
+            <input  type="hidden" name="description" value="{{auction.description}}">
+            <input  type="hidden" name="startbid" value="{{auction.startbid}}">
+            <input  type="hidden" name="category" value="{{auction.category}}">
+            <input  type="hidden" name="image" value="{{auction.image}}">
+            <input  type="hidden" name="createTime" value="{{auction.createTime}}">
+            <input class="btn btn-primary" type="submit" value="add">
+        </form>
+        {%else%}
+        <form action="{% url 'remove' %}" method="POST">
+            {% csrf_token %}
+            <input  type="hidden" name="title" value="{{auction.title}}">
+            <input class="btn btn-primary" type="submit" value="remove">
+        </form>
+        {%endif%}
+
+        {%if sameOwner == True %}
+        <form action="{% url 'close' %}" method="POST">
+            {% csrf_token %}
+            <input  type="hidden" name="title" value="{{auction.title}}">
+            <input class="btn btn-primary" type="submit" value="close">
+        </form>
+        {%endif%}
+
+    </div>
+    <div>
+        <h3>Description:</h3>
+        <h4>{{ auction.description }}</h4>
+        <br/>
+        <h3>Now Price: ${{ nowPrice  }}</h3>
+        <br/>
+        {% if user.is_authenticated %}
+        <form action="{% url 'newBids' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input  type="hidden" name="title" value="{{auction.title}}">
+                <input autofocus class="form-control" type="text" name="newBid" placeholder="Bid">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Bid">
+        </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <h1>Bid has been closed</h1>
+    {% if sameOwner %}
+    <h2>You are the owner now! ! !</h2>   
+    {%else%}
+    <h2>The owner now is {{auction.createby}}</h2>
+    {%endif%}
+    {%endif%}
+
+    <h3>Comments</h3>
+    <form action="{% url 'newComment' %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <input  type="hidden" name="title" value="{{auction.title}}">
+            <textarea placeholder="leave you comments there" name="comments" width="500px" height="300px"></textarea>
+        </div>
+        <input class="btn btn-primary" type="submit" value="comment">  
+    </form> 
+    </div>
+    {% for comment in comments%}
+    <div>
+        <h4>{{comment.name}}:{{comment.content}}</h4>
+    </div>
+    {%endfor%}
+{% endblock %}
